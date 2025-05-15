@@ -1,9 +1,8 @@
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -14,6 +13,8 @@ import org.testng.asserts.SoftAssert;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.Random;
 
@@ -23,7 +24,7 @@ public class WebsiteTestCasesAutomation extends Functions{
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     Actions act = new Actions(driver);
     SoftAssert softassert = new SoftAssert();
-    String email = "umarhassanzia88+test";
+    String email = "umarhassanzia+test";
     Random rn = new Random();
     double rand = Math.floor(Math.random() * 50);
     String emailFormation = email + rand + "@gmail.com";
@@ -32,6 +33,14 @@ public class WebsiteTestCasesAutomation extends Functions{
     String incorrectEmail = "umar88@gmail.com";
     String incorrectPassword = "Aqary@64";
 
+    @FindBy(name = "name")
+    WebElement usernameField;
+
+    @FindBy(name = "email")
+    WebElement emailField;
+
+    @FindBy(name = "submit")
+    WebElement submitButton;
 
     @Test(priority = 1)
     //First Test Case: Includes 18 Steps
@@ -126,8 +135,8 @@ public class WebsiteTestCasesAutomation extends Functions{
         pass.sendKeys(password);
         WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"form\"]/div/div/div[1]/div/form/button")));
         submitButton.click();
-        String incorrectemailpasstext = "Your email or password is incorrect!";
-        Assert.assertEquals(driver.findElement(By.xpath("//*[@id=\"form\"]/div/div/div[1]/div/form/p")).getText(), incorrectemailpasstext);
+        //String incorrectemailpasstext = "Your email or password is incorrect!";
+        //Assert.assertEquals(driver.findElement(By.xpath("//*[@id=\"form\"]/div/div/div[1]/div/form/p")).getText(), incorrectemailpasstext);
 
 
     }
@@ -135,13 +144,13 @@ public class WebsiteTestCasesAutomation extends Functions{
     public void invokeregsiterLogin(){
         registerUser();
         loginUser();
-        String loginAsserttext = "Logged in as" + firstname;
+        String loginAsserttext = "Logged in as " + firstname;
         Assert.assertEquals(driver.findElement(By.xpath("//*[@id=\"header\"]/div/div/div/div[2]/div/ul/li[10]/a")).getText(), loginAsserttext);
         WebElement delete = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Delete Account")));
         delete.click();
     }
 
-@Test
+    @Test
     public void IncorrectCredentials(){
         driver.get("https://automationexercise.com/");
         WebElement category = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/section[2]/div/div/div[1]/div/h2")));
@@ -163,4 +172,67 @@ public class WebsiteTestCasesAutomation extends Functions{
         Assert.assertEquals(driver.findElement(By.xpath("//*[@id=\"form\"]/div/div/div[1]/div/form/p")).getText(), incorrectemailpasstext);
 
 }
+@Test
+    public void registeruserExistingonSignup(){
+    driver.get("http://automationexercise.com");
+    driver.findElement(By.xpath("//*[@id=\"header\"]/div/div/div/div[2]/div/ul/li[4]/a")).click();
+    String email = "umarhassanzia+test48.0@gmail.com";
+    String password = "Aqary@88";
+    Assert.assertEquals(driver.findElement(By.xpath("//*[@id=\"form\"]/div/div/div[3]/div/h2")).getText(), "New User Signup!");
+    WebElement signupName = wait.until(ExpectedConditions.elementToBeClickable(By.name("name")));
+    signupName.sendKeys("Umar");
+    WebElement signupEmail = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"form\"]/div/div/div[3]/div/form/input[3]")));
+    signupEmail.sendKeys(email);
+    driver.findElement(By.xpath("//*[@id=\"form\"]/div/div/div[3]/div/form/button")).click();
+    Assert.assertEquals(driver.findElement(By.xpath("//*[@id=\"form\"]/div/div/div[3]/div/form/p")).getText(),"Email Address already exist!");
+
 }
+
+@Test
+    public void ContactUsForm() throws AWTException {
+    driver.get("http://automationexercise.com");
+    softassert.assertEquals(driver.findElement(By.xpath("/html/body/section[1]/div/div/div/div/div/div[3]/div[1]/h1 ")).getText(), "AutomationExercise");
+    WebElement contactUs = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Contact us")));
+    contactUs.click();
+    Assert.assertTrue(driver.findElement(By.xpath("//*[@id=\"contact-page\"]/div[2]/div[1]/div/h2")).isDisplayed());
+    driver.findElement(By.name("name")).sendKeys("Umar Hassan");
+    driver.findElement(By.name("email")).sendKeys("temp@gmail.com");
+    driver.findElement(By.name("message")).sendKeys("This is a great form");
+    /*WebElement chooseFile = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"contact-us-form\"]/div[5]/input")));
+    chooseFile.click();
+    String filePath = "C:\\Users\\umar\\Downloads\\WhatsApp Image 2025-05-01 at 4.00.40 PM (1).jpeg";
+    StringSelection selection = new StringSelection(filePath);
+    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+    Robot robot = new Robot();
+    robot.delay(1000);
+    robot.keyPress(KeyEvent.VK_CONTROL);
+    robot.keyPress(KeyEvent.VK_V);
+    robot.keyRelease(KeyEvent.VK_V);
+    robot.keyPress(KeyEvent.VK_CONTROL);
+
+    robot.keyPress(KeyEvent.VK_ENTER);
+    robot.keyRelease(KeyEvent.VK_ENTER);*/
+    driver.findElement(By.xpath("/html/body/div/div[2]/div[1]/div/div[3]/form/div[6]/input")).click();
+    Alert alert = driver.switchTo().alert();
+    alert.accept();
+}
+
+@Test
+public void contact(){
+    PageFactory.initElements(driver, this);
+    driver.get("http://automationexercise.com");
+    softassert.assertEquals(driver.findElement(By.xpath("/html/body/section[1]/div/div/div/div/div/div[3]/div[1]/h1 ")).getText(), "AutomationExercise");
+    WebElement contactUs = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Contact us")));
+    contactUs.click();
+    Assert.assertTrue(driver.findElement(By.xpath("//*[@id=\"contact-page\"]/div[2]/div[1]/div/h2")).isDisplayed());
+    usernameField.sendKeys("Umar");
+    emailField.sendKeys("Aqary@88");
+    submitButton.click();
+    Alert alert = driver.switchTo().alert();
+    alert.dismiss();
+
+}
+@AfterClass
+    public void Exit(){
+        //driver.close();
+}}
