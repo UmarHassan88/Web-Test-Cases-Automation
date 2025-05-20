@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
@@ -19,7 +20,7 @@ import java.time.Duration;
 import java.util.Random;
 
 public class WebsiteTestCasesAutomation extends Functions{
-    //Global Instances
+    //Global Instances and Variables
     WebDriver driver = new ChromeDriver();
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     Actions act = new Actions(driver);
@@ -33,14 +34,11 @@ public class WebsiteTestCasesAutomation extends Functions{
     String incorrectEmail = "umar88@gmail.com";
     String incorrectPassword = "Aqary@64";
 
-    @FindBy(name = "name")
-    WebElement usernameField;
-
-    @FindBy(name = "email")
-    WebElement emailField;
-
-    @FindBy(name = "submit")
-    WebElement submitButton;
+    //Global Function to navigate to URL and verify if the user is on the Homepage
+    public void navigatehomepageVisbility(){
+        driver.get("http://automationexercise.com");
+        softassert.assertEquals(driver.findElement(By.xpath("/html/body/section[1]/div/div/div/div/div/div[3]/div[1]/h1 ")).getText(), "AutomationExercise");
+    }
 
     @Test(priority = 1)
     //First Test Case: Includes 18 Steps
@@ -219,20 +217,36 @@ public class WebsiteTestCasesAutomation extends Functions{
 
 @Test
 public void contact(){
-    PageFactory.initElements(driver, this);
-    driver.get("http://automationexercise.com");
-    softassert.assertEquals(driver.findElement(By.xpath("/html/body/section[1]/div/div/div/div/div/div[3]/div[1]/h1 ")).getText(), "AutomationExercise");
+    navigatehomepageVisbility();
     WebElement contactUs = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Contact us")));
     contactUs.click();
     Assert.assertTrue(driver.findElement(By.xpath("//*[@id=\"contact-page\"]/div[2]/div[1]/div/h2")).isDisplayed());
-    usernameField.sendKeys("Umar");
-    emailField.sendKeys("Aqary@88");
-    submitButton.click();
+    locateFunctions instance = new locateFunctions(driver);
+    instance.initialize(driver);
+    instance.signUp("Umar","test@aqary.com");
+    driver.findElement(By.name("submit")).click();
     Alert alert = driver.switchTo().alert();
-    alert.dismiss();
+    alert.accept();
+
+}
+@Test
+public void verifyProducts(){
+    navigatehomepageVisbility();
+    locateFunctions instance = new locateFunctions(driver);
+    instance.initialize(driver);
+    instance.clickProducts();
+}
+
+@Test
+public void verifysubscriptionHomePage() throws InterruptedException {
+        navigatehomepageVisbility();
+        locateFunctions instance = new locateFunctions(driver);
+        instance.initialize(driver);
+        instance.verifySubscription();
 
 }
 @AfterClass
     public void Exit(){
-        //driver.close();
-}}
+        driver.close();
+}
+}
